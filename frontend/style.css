@@ -1,0 +1,8 @@
+body { font-family: Arial, sans-serif; max-width: 800px; margin: 24px auto; padding: 0 12px; }
+#chat { height: 420px; overflow: auto; border: 1px solid #ccc; border-radius: 10px; padding: 12px; background: #fff; }
+.msg { margin: 10px 0; white-space: pre-wrap; line-height: 1.35; }
+.you { color: #1b6; }
+.bot { color: #06c; }
+.row { display: flex; gap: 8px; margin-top: 12px; }
+input { flex: 1; padding: 10px; border-radius: 10px; border: 1px solid #777; }
+button { padding: 10px 14px; border-radius: 10px; border: 1px solid #777; cursor: pointer; }
