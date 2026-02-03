@@ -615,143 +615,10 @@ export default async function handler(req, res) {
   }
 
   const sessionId = req.query.session_id || req.headers['x-session-id'] || uuidv4();
-  const pathname = req.url.split('?')[0];
 
-  if (req.method === 'GET' && pathname === '/api/clinic/info') {
-    return res.status(200).json({ clinic: CLINIC_KB });
-  }
-
-  if (req.method === 'GET' && pathname === '/api/bookings') {
-    if (!sessionId) {
-      return res.status(400).json({ error: 'session_id is required' });
-    }
-    const store = loadStore();
-    const session = store[sessionId] || {
-      draft: newDraft(),
-      bookings: [],
-      history: [],
-    };
-    return res.status(200).json({ bookings: session.bookings || [] });
-  }
-
-  if (req.method === 'GET' && pathname.startsWith('/api/bookings/')) {
-    if (!sessionId) {
-      return res.status(400).json({ error: 'session_id is required' });
-    }
-    const bookingId = pathname.split('/api/bookings/')[1];
-    const store = loadStore();
-    const session = store[sessionId] || {
-      draft: newDraft(),
-      bookings: [],
-      history: [],
-    };
-    for (const b of session.bookings || []) {
-      if (b.id === bookingId) {
-        return res.status(200).json({ booking: b });
-      }
-    }
-    return res.status(404).json({ error: 'booking not found' });
-  }
-
-  if (req.method === 'PATCH' && pathname.startsWith('/api/bookings/')) {
-    if (!sessionId) {
-      return res.status(400).json({ error: 'session_id is required' });
-    }
-    const bookingId = pathname.split('/api/bookings/')[1];
-    const store = loadStore();
-    const session = store[sessionId];
-    if (!session) {
-      return res.status(404).json({ error: 'session not found' });
-    }
-    const bookings = session.bookings || [];
-    const updates = req.body.details || {};
-    for (const b of bookings) {
-      if (b.id === bookingId) {
-        let details = b.details || {};
-        if (updates.service && String(updates.service).trim()) {
-          const match = findService(String(updates.service), CLINIC_KB);
-          if (!match) {
-            return res.status(400).json({ error: 'invalid service' });
-          }
-          details.service = match;
-        }
-        if (updates.location && String(updates.location).trim()) {
-          const match = findLocation(String(updates.location), CLINIC_KB);
-          if (!match) {
-            return res.status(400).json({ error: 'invalid location' });
-          }
-          details.location = match;
-        }
-        if (updates.date && String(updates.date).trim()) {
-          if (!validDate(String(updates.date))) {
-            return res.status(400).json({ error: 'invalid date' });
-          }
-          details.date = String(updates.date).trim();
-        }
-        if (updates.time && String(updates.time).trim()) {
-          const timeText = extractTimeText(String(updates.time));
-          if (!timeText) {
-            return res.status(400).json({ error: 'invalid time' });
-          }
-          const loc = details.location || '';
-          if (loc && !isTimeWithinHours(timeText, loc, CLINIC_KB)) {
-            return res.status(400).json({ error: 'time outside hours' });
-          }
-          details.time = timeText;
-        }
-        if (updates.contact && String(updates.contact).trim()) {
-          if (String(updates.contact).trim().length < 3) {
-            return res.status(400).json({ error: 'invalid contact' });
-          }
-          details.contact = String(updates.contact).trim();
-        }
-        b.details = details;
-        b.updated_at = nowIso();
-        store[sessionId] = session;
-        saveStore(store);
-        return res.status(200).json({ ok: true, booking: b });
-      }
-    }
-    return res.status(404).json({ error: 'booking not found' });
-  }
-
-  if (req.method === 'DELETE' && pathname.startsWith('/api/bookings/')) {
-    if (!sessionId) {
-      return res.status(400).json({ error: 'session_id is required' });
-    }
-    const bookingId = pathname.split('/api/bookings/')[1];
-    const store = loadStore();
-    const session = store[sessionId];
-    if (!session) {
-      return res.status(404).json({ error: 'session not found' });
-    }
-    const bookings = session.bookings || [];
-    const newBookings = bookings.filter((b) => b.id !== bookingId);
-    if (newBookings.length === bookings.length) {
-      return res.status(404).json({ error: 'booking not found' });
-    }
-    session.bookings = newBookings;
-    store[sessionId] = session;
-    saveStore(store);
-    return res.status(200).json({ ok: true });
-  }
-
-  if (req.method === 'POST' && pathname === '/api/history/clear') {
-    if (!sessionId) {
-      return res.status(400).json({ error: 'session_id is required' });
-    }
-    const store = loadStore();
-    const session = store[sessionId];
-    if (!session) {
-      return res.status(404).json({ error: 'session not found' });
-    }
-    session.history = [];
-    store[sessionId] = session;
-    saveStore(store);
-    return res.status(200).json({ ok: true });
-  }
-
-  if (req.method === 'POST' && pathname === '/api/chat') {
+  // For Vercel: api/chat.js handles ALL requests to /api/chat
+  // So we just handle POST for chat
+  if (req.method === 'POST') {
     const sid = req.body.session_id || sessionId;
     const result = await handleChat(sid, req.body);
     return res.status(result.status).json({
@@ -760,5 +627,5 @@ export default async function handler(req, res) {
     });
   }
 
-  return res.status(404).json({ error: 'not found' });
+  return res.status(405).json({ error: 'Method not allowed. Use POST.' });
 }
