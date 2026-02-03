@@ -1,4 +1,7 @@
-const API_URL = "/api/chat";
+// Auto-detect: Use /api/chat for Vercel, or external API for GitHub Pages
+const API_URL = window.location.hostname.includes('github.io') 
+  ? "https://YOUR-PROJECT.vercel.app/api/chat"  // Replace with your Vercel URL
+  : "/api/chat";  // For Vercel deployment
 
 const chat = document.getElementById("chat");
 const input = document.getElementById("msg");
