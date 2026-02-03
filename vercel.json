@@ -1,0 +1,14 @@
+{
+  "buildCommand": "npm install",
+  "outputDirectory": "frontend",
+  "env": {
+    "OPENAI_API_KEY": "@openai_api_key"
+  },
+  "functions": {
+    "api/chat.js": {
+      "runtime": "nodejs18.x",
+      "memory": 1024,
+      "maxDuration": 30
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "iot-booking-bot",
+  "version": "1.0.0",
+  "description": "IOT Data Science Booking Bot on Vercel",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node -e \"console.log('Dev mode - use Vercel CLI: vercel dev')\"",
+    "build": "echo 'Build complete'",
+    "start": "echo 'Deployed on Vercel'"
+  },
+  "dependencies": {
+    "openai": "^2.16.0",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": "18.x"
+  }
+}
