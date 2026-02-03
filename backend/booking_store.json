@@ -4,8 +4,8 @@
       "booking_type": "appointment",
       "details": {},
       "status": "draft",
-      "created_at": "2026-02-03T13:05:03.063754+00:00",
-      "updated_at": "2026-02-03T13:05:03.063757+00:00",
+      "created_at": "2026-02-03T13:07:05.491097+00:00",
+      "updated_at": "2026-02-03T13:07:05.491104+00:00",
       "missing_fields": [],
       "last_field": "",
       "pending_field": "",
@@ -19,33 +19,32 @@
         "booking_type": "appointment",
         "details": {
           "service": "Dental Cleaning",
-          "date": "2026-02-10",
-          "time": "10am",
+          "date": "2026-02-13",
+          "time": "11am",
           "location": "Tampines",
           "contact": "shunciang 98887384"
         },
         "status": "booked",
         "created_at": "2026-02-03T13:05:03.063741+00:00",
-        "updated_at": "2026-02-03T13:05:03.063750+00:00",
+        "updated_at": "2026-02-03T13:06:25.909592+00:00",
         "confirmation_summary": "**Booking type:** appointment\n**service:** Dental Cleaning\n**date:** 2026-02-10\n**time:** 10am\n**location:** Tampines\n**contact:** shunciang 98887384\n**status:** draft"
+      },
+      {
+        "id": "0d8c2e11-eeae-45e4-b73a-017106caf186",
+        "booking_type": "appointment",
+        "details": {
+          "service": "General Consultation",
+          "date": "23 dec",
+          "time": "10:20am",
+          "location": "Raffles Place",
+          "contact": "87237283"
+        },
+        "status": "booked",
+        "created_at": "2026-02-03T13:07:05.491068+00:00",
+        "updated_at": "2026-02-03T13:07:05.491086+00:00",
+        "confirmation_summary": "**Booking type:** appointment\n**service:** General Consultation\n**date:** 23 dec\n**time:** 10:20am\n**location:** Raffles Place\n**contact:** 87237283\n**status:** draft"
       }
     ],
-    "history": [
-      {
-        "at": "2026-02-03T13:04:11.946935+00:00",
-        "user": "do i have booking",
-        "assistant": "You currently have a draft appointment with no details filled in. Please provide the necessary information to complete your booking."
-      },
-      {
-        "at": "2026-02-03T13:04:19.561938+00:00",
-        "user": "make booking for dental",
-        "assistant": "What service would you like to book? Options: General Consultation, Dental Cleaning, Physiotherapy, Vaccination"
-      },
-      {
-        "at": "2026-02-03T13:05:03.063760+00:00",
-        "user": "yes",
-        "assistant": "Successfully booked."
-      }
-    ]
+    "history": []
   }
 }

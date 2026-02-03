@@ -89,22 +89,22 @@ function renderBookings(bookings) {
       </div>
     `;
   }).join("");
-
-  bookingList.querySelectorAll("[data-delete]").forEach((btn) => {
-    btn.addEventListener("click", async () => {
-      const id = btn.getAttribute("data-delete");
-      await deleteBooking(id);
-      await fetchBookings();
-    });
-  });
-
-  bookingList.querySelectorAll("[data-open]").forEach((btn) => {
-    btn.addEventListener("click", async () => {
-      const id = btn.getAttribute("data-open");
-      await openBooking(id);
-    });
-  });
 }
+
+bookingList.addEventListener("click", async (e) => {
+  const deleteBtn = e.target.closest("[data-delete]");
+  if (deleteBtn) {
+    const id = deleteBtn.getAttribute("data-delete");
+    await deleteBooking(id);
+    await fetchBookings();
+    return;
+  }
+  const openBtn = e.target.closest("[data-open]");
+  if (openBtn) {
+    const id = openBtn.getAttribute("data-open");
+    await openBooking(id);
+  }
+});
 
 async function deleteBooking(id) {
   const sessionId = getSessionId();
@@ -116,10 +116,18 @@ async function deleteBooking(id) {
 
 async function openBooking(id) {
   const sessionId = getSessionId();
-  if (!sessionId) return;
+  if (!sessionId) {
+    modalError.textContent = "Missing session. Try sending a message first.";
+    modal.classList.remove("hidden");
+    return;
+  }
   const res = await fetch(`${API_URL.replace("/chat", "")}/bookings/${id}?session_id=${encodeURIComponent(sessionId)}`);
   const data = await res.json();
-  if (!data.booking) return;
+  if (!data.booking) {
+    modalError.textContent = data.error || "Booking not found.";
+    modal.classList.remove("hidden");
+    return;
+  }
   activeBookingId = id;
   const details = data.booking.details || {};
   editService.value = details.service || "";
