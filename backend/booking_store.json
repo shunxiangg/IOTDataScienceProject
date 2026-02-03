@@ -4,8 +4,8 @@
       "booking_type": "appointment",
       "details": {},
       "status": "draft",
-      "created_at": "2026-02-03T12:54:33.310172+00:00",
-      "updated_at": "2026-02-03T12:54:33.310177+00:00",
+      "created_at": "2026-02-03T13:05:03.063754+00:00",
+      "updated_at": "2026-02-03T13:05:03.063757+00:00",
       "missing_fields": [],
       "last_field": "",
       "pending_field": "",
@@ -15,39 +15,34 @@
     },
     "bookings": [
       {
-        "id": "3560fb31-5457-4831-840f-954cf2165666",
+        "id": "6d4a567e-5317-4dbc-8375-a24eb8dc33e8",
         "booking_type": "appointment",
         "details": {
-          "service": "General Consultation",
-          "date": "22dec",
+          "service": "Dental Cleaning",
+          "date": "2026-02-10",
           "time": "10am",
           "location": "Tampines",
-          "contact": "9887374"
+          "contact": "shunciang 98887384"
         },
         "status": "booked",
-        "created_at": "2026-02-03T12:54:33.310151+00:00",
-        "updated_at": "2026-02-03T12:54:33.310164+00:00",
-        "confirmation_summary": "**Booking type:** appointment\n**service:** General Consultation\n**date:** 22dec\n**time:** 10am\n**location:** Tampines\n**contact:** 9887374\n**status:** draft"
+        "created_at": "2026-02-03T13:05:03.063741+00:00",
+        "updated_at": "2026-02-03T13:05:03.063750+00:00",
+        "confirmation_summary": "**Booking type:** appointment\n**service:** Dental Cleaning\n**date:** 2026-02-10\n**time:** 10am\n**location:** Tampines\n**contact:** shunciang 98887384\n**status:** draft"
       }
     ],
     "history": [
       {
-        "at": "2026-02-03T12:46:59.192835+00:00",
-        "user": "bookigsDental Cleaning",
-        "assistant": "To book a Dental Cleaning at BookBot Clinic, please choose a location:\n\n1. **Raffles Place**: 1 Raffles Place, Singapore 048616 (Mon-Fri: 09:00-18:00, Sat: 09:00-13:00)\n2. **Orchard**: 200 Orchard Rd, Singapore 238852 (Mon-Fri: 10:00-19:00, Sat: 10:00-14:00)\n3. **Tampines**: 10 Tampines Central 1, Singapore 529536 (Mon-Fri: 09:00-18:30, Sat: 09:00-13:00)\n\nThe Dental Cleaning service lasts 45 minutes and costs SGD 120. Please let me know your preferred location and the date you'd like to book, keeping in mind that bookings can be made up to 60 days in advance."
+        "at": "2026-02-03T13:04:11.946935+00:00",
+        "user": "do i have booking",
+        "assistant": "You currently have a draft appointment with no details filled in. Please provide the necessary information to complete your booking."
       },
       {
-        "at": "2026-02-03T12:47:02.174436+00:00",
-        "user": "10 am at orchard",
-        "assistant": "You can book an appointment at the Orchard location of BookBot Clinic at 10 AM. The clinic is open from 10:00 AM to 7:00 PM on weekdays. Please let me know which service you would like to book!"
+        "at": "2026-02-03T13:04:19.561938+00:00",
+        "user": "make booking for dental",
+        "assistant": "What service would you like to book? Options: General Consultation, Dental Cleaning, Physiotherapy, Vaccination"
       },
       {
-        "at": "2026-02-03T12:47:22.149714+00:00",
-        "user": "Dental Cleaning",
-        "assistant": "For a dental cleaning at BookBot Clinic, the service lasts 45 minutes and costs SGD 120. \n\nThe clinic has three locations:\n1. **Raffles Place**: 1 Raffles Place, Singapore 048616\n   - Hours: Mon-Fri 09:00-18:00, Sat 09:00-13:00, Sun closed\n2. **Orchard**: 200 Orchard Rd, Singapore 238852\n   - Hours: Mon-Fri 10:00-19:00, Sat 10:00-14:00, Sun closed\n3. **Tampines**: 10 Tampines Central 1, Singapore 529536\n   - Hours: Mon-Fri 09:00-18:30, Sat 09:00-13:00, Sun closed\n\nYou can book an appointment up to 60 days in advance, and appointments are scheduled in 15-minute increments. Let me know if you would like to proceed with booking!"
-      },
-      {
-        "at": "2026-02-03T12:54:33.310185+00:00",
+        "at": "2026-02-03T13:05:03.063760+00:00",
         "user": "yes",
         "assistant": "Successfully booked."
       }

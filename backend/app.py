@@ -654,6 +654,62 @@ def list_bookings(session_id: str):
     session = store.get(session_id) or {"draft": _new_draft(), "bookings": [], "history": []}
     return {"bookings": session.get("bookings") or []}
 
+@app.get("/bookings/{booking_id}")
+def get_booking(booking_id: str, session_id: str):
+    store = _load_store()
+    session = store.get(session_id) or {"draft": _new_draft(), "bookings": [], "history": []}
+    for b in session.get("bookings") or []:
+        if b.get("id") == booking_id:
+            return {"booking": b}
+    return {"error": "booking not found"}
+
+@app.patch("/bookings/{booking_id}")
+def update_booking(booking_id: str, session_id: str, body: dict):
+    store = _load_store()
+    session = store.get(session_id)
+    if not session:
+        return {"ok": False, "error": "session not found"}
+    bookings = session.get("bookings") or []
+    kb = _load_kb()
+    for b in bookings:
+        if b.get("id") == booking_id:
+            details = b.get("details") or {}
+            updates = body.get("details") or {}
+            # validate updates
+            if "service" in updates and str(updates["service"]).strip():
+                match = _find_service(str(updates["service"]), kb)
+                if not match:
+                    return {"ok": False, "error": "invalid service"}
+                details["service"] = match
+            if "location" in updates and str(updates["location"]).strip():
+                match = _find_location(str(updates["location"]), kb)
+                if not match:
+                    return {"ok": False, "error": "invalid location"}
+                details["location"] = match
+            if "date" in updates and str(updates["date"]).strip():
+                if not _valid_date(str(updates["date"])):
+                    return {"ok": False, "error": "invalid date"}
+                details["date"] = str(updates["date"]).strip()
+            if "time" in updates and str(updates["time"]).strip():
+                time_text = _extract_time_text(str(updates["time"]))
+                if not time_text:
+                    return {"ok": False, "error": "invalid time"}
+                loc = details.get("location", "")
+                if loc and not _is_time_within_hours(time_text, loc, kb):
+                    return {"ok": False, "error": "time outside hours"}
+                details["time"] = time_text
+            if "contact" in updates and str(updates["contact"]).strip():
+                if len(str(updates["contact"]).strip()) < 3:
+                    return {"ok": False, "error": "invalid contact"}
+                details["contact"] = str(updates["contact"]).strip()
+
+            b["details"] = details
+            b["updated_at"] = _now_iso()
+            store[session_id] = session
+            _save_store(store)
+            return {"ok": True, "booking": b}
+    return {"ok": False, "error": "booking not found"}
+
 @app.delete("/bookings/{booking_id}")
 def delete_booking(booking_id: str, session_id: str):
     store = _load_store()

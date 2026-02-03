@@ -45,6 +45,41 @@
     </main>
   </div>
 
+  <div id="bookingModal" class="modal hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">Booking Details</div>
+        <button id="closeModal" class="ghost">Close</button>
+      </div>
+      <div class="modal-body">
+        <div class="field">
+          <label>Service</label>
+          <input id="editService" />
+        </div>
+        <div class="field">
+          <label>Date</label>
+          <input id="editDate" />
+        </div>
+        <div class="field">
+          <label>Time</label>
+          <input id="editTime" />
+        </div>
+        <div class="field">
+          <label>Location</label>
+          <input id="editLocation" />
+        </div>
+        <div class="field">
+          <label>Contact</label>
+          <input id="editContact" />
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button id="saveBooking" class="primary">Save</button>
+      </div>
+      <div id="modalError" class="modal-error"></div>
+    </div>
+  </div>
+
   <script src="main.js"></script>
 </body>
 </html>
