@@ -9,6 +9,18 @@
       "runtime": "nodejs18.x",
       "memory": 1024,
       "maxDuration": 30
+    },
+    "api/bookings.js": {
+      "runtime": "nodejs18.x"
+    },
+    "api/bookings/[id].js": {
+      "runtime": "nodejs18.x"
+    },
+    "api/clinic/info.js": {
+      "runtime": "nodejs18.x"
+    },
+    "api/history/clear.js": {
+      "runtime": "nodejs18.x"
     }
   }
 }
