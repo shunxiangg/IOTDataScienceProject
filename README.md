@@ -32,6 +32,19 @@ Create `backend\.env` with:
 OPENAI_API_KEY=YOUR_OPENAI_KEY_HERE
 ```
 
+The backend stores booking sessions in:
+```
+backend\booking_store.json
+```
+Clinic knowledge base lives in:
+```
+backend\clinic_kb.json
+```
+You can manage bookings via:
+- `GET /bookings?session_id=...`
+- `DELETE /bookings/{id}?session_id=...`
+- `POST /history/clear?session_id=...`
+
 ### 2) Frontend
 Serve the static frontend:
 

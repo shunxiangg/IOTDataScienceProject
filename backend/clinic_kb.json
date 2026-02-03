@@ -1,0 +1,56 @@
+{
+  "clinic_name": "BookBot Clinic",
+  "services": [
+    {
+      "name": "General Consultation",
+      "duration_minutes": 30,
+      "price_sgd": 60
+    },
+    {
+      "name": "Dental Cleaning",
+      "duration_minutes": 45,
+      "price_sgd": 120
+    },
+    {
+      "name": "Physiotherapy",
+      "duration_minutes": 60,
+      "price_sgd": 150
+    },
+    {
+      "name": "Vaccination",
+      "duration_minutes": 15,
+      "price_sgd": 40
+    }
+  ],
+  "locations": [
+    {
+      "name": "Raffles Place",
+      "address": "1 Raffles Place, Singapore 048616",
+      "hours": {
+        "mon_fri": "09:00-18:00",
+        "sat": "09:00-13:00",
+        "sun": "closed"
+      }
+    },
+    {
+      "name": "Orchard",
+      "address": "200 Orchard Rd, Singapore 238852",
+      "hours": {
+        "mon_fri": "10:00-19:00",
+        "sat": "10:00-14:00",
+        "sun": "closed"
+      }
+    },
+    {
+      "name": "Tampines",
+      "address": "10 Tampines Central 1, Singapore 529536",
+      "hours": {
+        "mon_fri": "09:00-18:30",
+        "sat": "09:00-13:00",
+        "sun": "closed"
+      }
+    }
+  ],
+  "time_policy": "Appointments are scheduled in 15-minute increments within location hours.",
+  "date_policy": "Bookings allowed up to 60 days in advance."
+}

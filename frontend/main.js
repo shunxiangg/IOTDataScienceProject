@@ -3,11 +3,15 @@ const API_URL = "http://127.0.0.1:8000/chat";
 const chat = document.getElementById("chat");
 const input = document.getElementById("msg");
 const btn = document.getElementById("sendBtn");
+const bookingList = document.getElementById("bookingList");
+const refreshBtn = document.getElementById("refreshBookings");
+const clearHistoryBtn = document.getElementById("clearHistory");
 
 function addMsg(who, text) {
   const div = document.createElement("div");
   div.className = "msg " + (who === "You" ? "you" : "bot");
-  div.innerHTML = `<b>${who}:</b> ${escapeHtml(text)}`;
+  const rendered = renderText(text);
+  div.innerHTML = `<b>${who}:</b> ${rendered}`;
   chat.appendChild(div);
   chat.scrollTop = chat.scrollHeight;
 }
@@ -16,14 +20,105 @@ function escapeHtml(s) {
   return s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
 }
 
+function renderText(text) {
+  const escaped = escapeHtml(text);
+  const bolded = escaped.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  return bolded.replace(/\*\*/g, "");
+}
+
+function getSessionId() {
+  return localStorage.getItem("session_id") || "";
+}
+
+function setSessionId(id) {
+  if (id) localStorage.setItem("session_id", id);
+}
+
 async function sendToBot(message) {
   const res = await fetch(API_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message })
+    headers: {
+      "Content-Type": "application/json",
+      "X-Session-Id": getSessionId()
+    },
+    body: JSON.stringify({ message, session_id: getSessionId() })
   });
   const data = await res.json();
+  if (data.session_id) setSessionId(data.session_id);
   return data.reply || "(no reply)";
+}
+
+async function fetchBookings() {
+  const sessionId = getSessionId();
+  if (!sessionId) {
+    bookingList.innerHTML = "<div class=\"booking-meta\">No session yet.</div>";
+    return;
+  }
+  const res = await fetch(`${API_URL.replace("/chat", "")}/bookings?session_id=${encodeURIComponent(sessionId)}`);
+  const data = await res.json();
+  renderBookings(data.bookings || []);
+}
+
+function renderBookings(bookings) {
+  if (!bookings.length) {
+    bookingList.innerHTML = "<div class=\"booking-meta\">No bookings yet.</div>";
+    return;
+  }
+  bookingList.innerHTML = bookings.map((b) => {
+    const title = b.booking_type || "unknown";
+    const detailKeys = Object.keys(b.details || {});
+    const detailPreview = detailKeys.slice(0, 2).map((k) => `${k}: ${b.details[k]}`).join(" • ");
+    return `
+      <div class="booking-card">
+        <div class="booking-title">${escapeHtml(title)}</div>
+        <div class="booking-meta">${escapeHtml(detailPreview || "No details")}</div>
+        <div class="booking-actions">
+          <button class="danger" data-delete="${b.id}">Delete</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  bookingList.querySelectorAll("[data-delete]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const id = btn.getAttribute("data-delete");
+      await deleteBooking(id);
+      await fetchBookings();
+    });
+  });
+}
+
+async function deleteBooking(id) {
+  const sessionId = getSessionId();
+  if (!sessionId) return;
+  await fetch(`${API_URL.replace("/chat", "")}/bookings/${id}?session_id=${encodeURIComponent(sessionId)}`, {
+    method: "DELETE"
+  });
+}
+
+async function clearHistory() {
+  const sessionId = getSessionId();
+  if (!sessionId) return;
+  await fetch(`${API_URL.replace("/chat", "")}/history/clear?session_id=${encodeURIComponent(sessionId)}`, {
+    method: "POST"
+  });
+  chat.innerHTML = "";
+  addMsg("Bot", "Chat history cleared. Happy now?");
+}
+
+async function fetchClinicInfo() {
+  const res = await fetch(`${API_URL.replace("/chat", "")}/clinic/info`);
+  const data = await res.json();
+  const clinic = data.clinic || {};
+  const services = (clinic.services || []).map((s) => {
+    const bits = [s.name];
+    if (s.duration_minutes) bits.push(`${s.duration_minutes} min`);
+    if (s.price_sgd != null) bits.push(`SGD ${s.price_sgd}`);
+    return bits.join(" • ");
+  });
+  if (services.length) {
+    addMsg("Bot", "Services available:\n- " + services.join("\n- "));
+  }
 }
 
 async function onSend() {
@@ -40,6 +135,7 @@ async function onSend() {
     const reply = await sendToBot(text);
     typing.remove();
     addMsg("Bot", reply);
+    await fetchBookings();
   } catch (e) {
     typing.remove();
     addMsg("Bot", "Error calling backend. Check terminal logs.");
@@ -49,5 +145,11 @@ async function onSend() {
 
 btn.addEventListener("click", onSend);
 input.addEventListener("keydown", (e) => { if (e.key === "Enter") onSend(); });
+refreshBtn.addEventListener("click", fetchBookings);
+clearHistoryBtn.addEventListener("click", clearHistory);
 
-addMsg("Bot", "Hi! This is running locally. Ask me anything.");
+addMsg("Bot", "Hi, I'm BookBot. Here are the available services:");
+fetchClinicInfo().catch(() => {
+  addMsg("Bot", "I couldn't load the service list right now.");
+});
+fetchBookings();

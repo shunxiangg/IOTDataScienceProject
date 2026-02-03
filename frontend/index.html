@@ -3,16 +3,46 @@
 <head>
   <link rel="icon" href="data:,">
   <meta charset="utf-8" />
-  <title>Local OpenAI Chatbot</title>
+  <title>BookBot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h2>Local OpenAI Chatbot</h2>
-  <div id="chat"></div>
+  <div class="page">
+    <aside class="side">
+      <div class="brand">
+        <div class="logo">BB</div>
+        <div>
+          <div class="title">BookBot</div>
+          <div class="subtitle">Local Booking Console</div>
+        </div>
+      </div>
 
-  <div class="row">
-    <input id="msg" placeholder="Type a message..." />
-    <button id="sendBtn">Send</button>
+      <div class="side-header">
+        <div class="label">Bookings</div>
+        <button id="refreshBookings" class="ghost">Refresh</button>
+      </div>
+      <div id="bookingList" class="booking-list"></div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="headline">Make a booking. I dare you.</div>
+        <div class="actions">
+          <button id="clearHistory" class="ghost">Clear Chat</button>
+        </div>
+      </div>
+
+      <div id="chat" class="chat"></div>
+
+      <div class="composer">
+        <input id="msg" placeholder="Tell me what you want to book..." />
+        <button id="sendBtn" class="primary">Send</button>
+      </div>
+    </main>
   </div>
 
   <script src="main.js"></script>
