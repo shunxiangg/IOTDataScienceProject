@@ -1,6 +1,10 @@
 {
   "rewrites": [
-    { "source": "/api/:path*", "destination": "/api/:path*" }
+    { "source": "/api/clinic/info", "destination": "/api/clinic/info.js" },
+    { "source": "/api/chat", "destination": "/api/chat.js" },
+    { "source": "/api/bookings", "destination": "/api/bookings.js" },
+    { "source": "/api/bookings/:id", "destination": "/api/bookings/[id].js" },
+    { "source": "/api/history/clear", "destination": "/api/history/clear.js" }
   ],
   "functions": {
     "api/chat.js": {
