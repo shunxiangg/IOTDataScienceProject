@@ -1,6 +1,4 @@
 {
-  "buildCommand": "npm install",
-  "outputDirectory": "frontend",
   "functions": {
     "api/chat.js": {
       "runtime": "nodejs24.x",

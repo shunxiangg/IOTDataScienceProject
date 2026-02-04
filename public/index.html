@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="icon" href="data:,">
+  <meta charset="utf-8" />
+  <title>BookBot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page">
+    <aside class="side">
+      <div class="brand">
+        <div class="logo">BB</div>
+        <div>
+          <div class="title">BookBot</div>
+          <div class="subtitle">Local Booking Console</div>
+        </div>
+      </div>
+
+      <div class="side-header">
+        <div class="label">Bookings</div>
+        <button id="refreshBookings" class="ghost">Refresh</button>
+      </div>
+      <div id="bookingList" class="booking-list"></div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="headline">Make a booking. I dare you.</div>
+        <div class="actions">
+          <button id="clearHistory" class="ghost">Clear Chat</button>
+        </div>
+      </div>
+
+      <div id="chat" class="chat"></div>
+
+      <div class="composer">
+        <input id="msg" placeholder="Tell me what you want to book..." />
+        <button id="sendBtn" class="primary">Send</button>
+      </div>
+    </main>
+  </div>
+
+  <div id="bookingModal" class="modal hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">Booking Details</div>
+        <button id="closeModal" class="ghost">Close</button>
+      </div>
+      <div class="modal-body">
+        <div class="field">
+          <label>Service</label>
+          <input id="editService" />
+        </div>
+        <div class="field">
+          <label>Date</label>
+          <input id="editDate" />
+        </div>
+        <div class="field">
+          <label>Time</label>
+          <input id="editTime" />
+        </div>
+        <div class="field">
+          <label>Location</label>
+          <input id="editLocation" />
+        </div>
+        <div class="field">
+          <label>Contact</label>
+          <input id="editContact" />
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button id="saveBooking" class="primary">Save</button>
+      </div>
+      <div id="modalError" class="modal-error"></div>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>

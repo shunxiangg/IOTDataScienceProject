@@ -10,7 +10,7 @@
     "start": "echo 'Deployed on Vercel'"
   },
   "dependencies": {
-    "openai": "^2.16.0",
+    "openai": "^4.0.0",
     "uuid": "^9.0.0"
   },
   "devDependencies": {},
