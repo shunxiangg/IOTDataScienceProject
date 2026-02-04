@@ -510,18 +510,29 @@ export default async function handler(req, res) {
     return res.status(200).json({ ok: true });
   }
 
-  const sessionId = req.query.session_id || req.headers['x-session-id'] || uuidv4();
+  try {
+    const sessionId = req.query.session_id || req.headers['x-session-id'] || uuidv4();
 
-  // For Vercel: api/chat.js handles ALL requests to /api/chat
-  // So we just handle POST for chat
-  if (req.method === 'POST') {
-    const sid = req.body.session_id || sessionId;
-    const result = await handleChat(sid, req.body);
-    return res.status(result.status).json({
-      reply: result.reply,
-      session_id: result.sessionId,
+    // For Vercel: api/chat.js handles ALL requests to /api/chat
+    // So we just handle POST for chat
+    if (req.method === 'POST') {
+      if (!req.body || !req.body.message) {
+        return res.status(400).json({ error: 'Missing message field' });
+      }
+      const sid = req.body.session_id || sessionId;
+      const result = await handleChat(sid, req.body);
+      return res.status(result.status).json({
+        reply: result.reply,
+        session_id: result.sessionId,
+      });
+    }
+
+    return res.status(405).json({ error: 'Method not allowed. Use POST.' });
+  } catch (error) {
+    console.error('Chat handler error:', error);
+    return res.status(500).json({ 
+      error: 'Internal server error',
+      message: error.message 
     });
   }
-
-  return res.status(405).json({ error: 'Method not allowed. Use POST.' });
 }

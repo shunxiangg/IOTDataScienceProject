@@ -56,6 +56,13 @@ async function sendToBot(message) {
     },
     body: JSON.stringify({ message, session_id: getSessionId() })
   });
+  
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error('API Error:', res.status, errorText);
+    throw new Error(`API returned ${res.status}: ${errorText}`);
+  }
+  
   const data = await res.json();
   if (data.session_id) setSessionId(data.session_id);
   return data.reply || "(no reply)";
@@ -183,6 +190,8 @@ async function clearHistory() {
 }
 
 async function fetchClinicInfo() {
+  // Services are provided by the chat API, so this call is not needed
+  /*
   const res = await fetch(`${API_URL.replace("/chat", "")}/clinic/info`);
   const data = await res.json();
   const clinic = data.clinic || {};
@@ -195,6 +204,7 @@ async function fetchClinicInfo() {
   if (services.length) {
     addMsg("Bot", "Services available:\n- " + services.join("\n- "));
   }
+  */
 }
 
 async function onSend() {
@@ -214,7 +224,7 @@ async function onSend() {
     await fetchBookings();
   } catch (e) {
     typing.remove();
-    addMsg("Bot", "Error calling backend. Check terminal logs.");
+    addMsg("Bot", "Error: " + e.message);
     console.error(e);
   }
 }

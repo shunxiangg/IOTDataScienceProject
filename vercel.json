@@ -1,28 +1,4 @@
 {
-  "rewrites": [
-    { "source": "/api/clinic/info", "destination": "/api/clinic/info.js" },
-    { "source": "/api/chat", "destination": "/api/chat.js" },
-    { "source": "/api/bookings", "destination": "/api/bookings.js" },
-    { "source": "/api/bookings/:id", "destination": "/api/bookings/[id].js" },
-    { "source": "/api/history/clear", "destination": "/api/history/clear.js" }
-  ],
-  "functions": {
-    "api/chat.js": {
-      "runtime": "nodejs24.x",
-      "memory": 1024,
-      "maxDuration": 30
-    },
-    "api/bookings.js": {
-      "runtime": "nodejs24.x"
-    },
-    "api/bookings/[id].js": {
-      "runtime": "nodejs24.x"
-    },
-    "api/clinic/info.js": {
-      "runtime": "nodejs24.x"
-    },
-    "api/history/clear.js": {
-      "runtime": "nodejs24.x"
-    }
-  }
+  "buildCommand": "npm install",
+  "installCommand": "npm install"
 }
