@@ -60,6 +60,22 @@ const editLocation = document.getElementById("editLocation");
 const editContact = document.getElementById("editContact");
 let activeBookingId = null;
 
+const SERVICE_CATALOG = [
+  { name: "General Consultation", duration_minutes: 30, price_sgd: 60 },
+  { name: "Dental Cleaning", duration_minutes: 45, price_sgd: 120 },
+  { name: "Physiotherapy", duration_minutes: 60, price_sgd: 150 },
+  { name: "Vaccination", duration_minutes: 15, price_sgd: 40 }
+];
+
+function formatServiceList(services) {
+  return services.map((s) => {
+    const bits = [s.name];
+    if (s.duration_minutes) bits.push(`${s.duration_minutes} min`);
+    if (s.price_sgd != null) bits.push(`SGD ${s.price_sgd}`);
+    return bits.join(" | ");
+  });
+}
+
 function addMsg(who, text) {
   const div = document.createElement("div");
   div.className = "msg " + (who === "You" ? "you" : "bot");
@@ -253,23 +269,10 @@ async function clearHistory() {
   addMsg("Bot", "Chat history cleared. Happy now?");
 }
 
-async function fetchClinicInfo() {
-  // Services are provided by the chat API, so this call is not needed
-  /*
-  const data = await fetchJson(apiUrl("/clinic/info"), {
-    headers: { ...sessionHeaders() }
-  });
-  const clinic = data.clinic || {};
-  const services = (clinic.services || []).map((s) => {
-    const bits = [s.name];
-    if (s.duration_minutes) bits.push(`${s.duration_minutes} min`);
-    if (s.price_sgd != null) bits.push(`SGD ${s.price_sgd}`);
-    return bits.join(" | ");
-  });
-  if (services.length) {
-    addMsg("Bot", "Services available:\n- " + services.join("\n- "));
-  }
-  */
+function showAvailableServices() {
+  if (!SERVICE_CATALOG.length) return;
+  const services = formatServiceList(SERVICE_CATALOG);
+  addMsg("Bot", "Services available:\n- " + services.join("\n- "));
 }
 
 async function onSend() {
@@ -302,9 +305,7 @@ closeModalBtn.addEventListener("click", () => modal.classList.add("hidden"));
 saveBookingBtn.addEventListener("click", saveBooking);
 
 addMsg("Bot", "Hi, I'm BookBot. Here are the available services:");
+showAvailableServices();
 showApiBanner();
-fetchClinicInfo().catch(() => {
-  addMsg("Bot", "I couldn't load the service list right now.");
-});
 fetchBookings();
 
