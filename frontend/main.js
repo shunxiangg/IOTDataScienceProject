@@ -1,5 +1,13 @@
-// Vercel deployment API endpoint
-const API_URL = "https://iot-data-science-project-sxsx-shunxianggs-projects.vercel.app/api/chat";
+// Use local FastAPI when running on localhost; otherwise same-origin or GitHub Pages.
+const isLocalhost =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1";
+
+const API_URL = isLocalhost
+  ? "http://127.0.0.1:8000/chat"
+  : window.location.hostname.includes("github.io")
+    ? "https://iot-data-science-project-sxsx.vercel.app/api/chat"
+    : "/api/chat";
 
 const chat = document.getElementById("chat");
 const input = document.getElementById("msg");

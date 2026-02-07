@@ -1,0 +1,32 @@
+{
+  "e489a181-f2e9-4e3f-bfe4-656962d74fa4": {
+    "draft": {
+      "booking_type": "appointment",
+      "details": {},
+      "status": "draft",
+      "created_at": "2026-02-07T13:14:32.434915+00:00",
+      "updated_at": "2026-02-07T13:14:51.707041+00:00",
+      "missing_fields": [
+        "service"
+      ],
+      "last_field": "service",
+      "pending_field": "",
+      "pending_value": "",
+      "awaiting_confirmation": false,
+      "confirmation_summary": ""
+    },
+    "bookings": [],
+    "history": [
+      {
+        "at": "2026-02-07T13:14:34.704228+00:00",
+        "user": "he",
+        "assistant": "Hello! How can I assist you today? If you have any questions about our services or booking at BookBot Clinic, feel free to ask!"
+      },
+      {
+        "at": "2026-02-07T13:14:51.707549+00:00",
+        "user": "i want to make a booking",
+        "assistant": "What service would you like to book? Options: General Consultation, Dental Cleaning, Physiotherapy, Vaccination"
+      }
+    ]
+  }
+}
