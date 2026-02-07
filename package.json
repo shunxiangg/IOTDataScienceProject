@@ -5,9 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "node -e \"console.log('Dev mode - use Vercel CLI: vercel dev')\"",
-    "build": "echo 'Build complete'",
-    "start": "echo 'Deployed on Vercel'"
+    "dev": "powershell -ExecutionPolicy Bypass -File scripts\\dev.ps1",
+    "build": "echo 'No build step required for local dev'",
+    "start": "npm run dev"
   },
   "dependencies": {
     "openai": "^4.0.0",

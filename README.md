@@ -10,6 +10,17 @@ Simple OpenAI chat demo with:
 
 ## Local Run (FastAPI + Static Frontend)
 
+### Single Command
+```powershell
+npm run dev
+```
+
+This launches:
+- Backend: [http://127.0.0.1:8000](http://127.0.0.1:8000)
+- Frontend: [http://127.0.0.1:5500/](http://127.0.0.1:5500/)
+
+Use the IPv4 loopback URLs above. If you open the frontend on IPv6 (`http://[::1]:5500`), the browser may post to the static server and return `501 Unsupported method`. If you need to force a different API (override), append `?api=http://127.0.0.1:8000` to the frontend URL.
+
 ### 1) Backend
 Create and activate a virtual environment, install dependencies, and run the API.
 
@@ -54,9 +65,10 @@ python -m http.server 5500
 ```
 
 Open:
-```
-http://127.0.0.1:5500
-```
+[http://127.0.0.1:5500/](http://127.0.0.1:5500/)
+
+If the UI still points to the wrong API, force it with:
+[http://127.0.0.1:5500/?api=http://127.0.0.1:8000](http://127.0.0.1:5500/?api=http://127.0.0.1:8000)
 
 ## AWS Lambda Backend
 

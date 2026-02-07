@@ -145,6 +145,12 @@ def _kb_summary(kb: dict) -> str:
         lines.append(f"Date policy: {kb['date_policy']}")
     return "\n".join(lines) if lines else "No clinic info available."
 
+def _service_options(kb: dict) -> str:
+    services = [s.get("name") for s in (kb.get("services") or []) if s.get("name")]
+    if not services:
+        return ""
+    return " Available services: " + ", ".join(services)
+
 def _is_info_request(text: str) -> bool:
     return re.search(r"\b(services|service list|opening hours|hours|locations|price|pricing|clinic info|clinic information)\b", text.lower()) is not None
 
@@ -344,7 +350,7 @@ def chat(body: ChatIn, x_session_id: str | None = Header(default=None)):
                     store[session_id] = session
                     _save_store(store)
                     return {"reply": f"Did you mean {suggestion}? (yes/no)", "session_id": session_id}
-                return {"reply": "Invalid service. Please re-enter a valid service from the list.", "session_id": session_id}
+                return {"reply": "Invalid service. Please re-enter a valid service from the list." + _service_options(kb), "session_id": session_id}
             value = match
         elif last_field == "location":
             match = _find_location(value, kb)
@@ -454,9 +460,10 @@ def chat(body: ChatIn, x_session_id: str | None = Header(default=None)):
     # Free chat: not about booking flow or clinic info
     if not _is_booking_related(user_msg) and not draft.get("last_field") and not draft.get("awaiting_confirmation") and not _is_confirm_intent(user_msg):
         free_prompt = (
-            "You are a helpful assistant. Answer the user's question. "
+            "You are a friendly, conversational assistant. "
+            "Answer the user's question in a warm, natural tone. "
             "If they ask about the clinic or booking data, use the provided JSON.\n"
-            "Be concise and clear."
+            "Keep responses short and helpful, and ask one follow-up question when it makes sense."
         )
         resp = client.chat.completions.create(
             model="gpt-4o-mini",
@@ -529,7 +536,7 @@ def chat(body: ChatIn, x_session_id: str | None = Header(default=None)):
         "- If a time is outside the location hours, ask for a time within hours.\n"
         "- When all required fields are present, set is_complete=true and provide a confirmation_summary.\n"
         "- Your reply should ask the user to confirm the summary.\n"
-        "- Be concise, professional, and helpful."
+        "- Be conversational, friendly, and helpful."
     )
 
     resp = client.chat.completions.create(
@@ -579,7 +586,7 @@ def chat(body: ChatIn, x_session_id: str | None = Header(default=None)):
                         store[session_id] = session
                         _save_store(store)
                         return {"reply": f"Did you mean {suggestion}? (yes/no)", "session_id": session_id}
-                    return {"reply": "Invalid service. Please re-enter a valid service from the list.", "session_id": session_id}
+                    return {"reply": "Invalid service. Please re-enter a valid service from the list." + _service_options(kb), "session_id": session_id}
                 draft["details"][k] = match
             elif k == "location":
                 match = _find_location(str(v), kb)

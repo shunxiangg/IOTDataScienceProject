@@ -1,13 +1,47 @@
-// Use local FastAPI when running on localhost; otherwise same-origin or GitHub Pages.
-const isLocalhost =
-  window.location.hostname === "localhost" ||
-  window.location.hostname === "127.0.0.1";
+// Resolve API root once and keep session handling consistent.
+const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "::1"]);
 
-const API_URL = isLocalhost
-  ? "http://127.0.0.1:8000/chat"
-  : window.location.hostname.includes("github.io")
-    ? "https://iot-data-science-project-sxsx.vercel.app/api/chat"
-    : "/api/chat";
+function resolveApiRoot() {
+  const host = window.location.hostname.replace(/^\[|\]$/g, "");
+  const port = window.location.port;
+  if (window.location.protocol === "file:" || LOCAL_HOSTS.has(host) || port === "5500") {
+    return "http://127.0.0.1:8000";
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const override = params.get("api") || localStorage.getItem("API_ROOT");
+  if (override && /^https?:\/\//i.test(override)) {
+    return override.replace(/\/$/, "");
+  }
+
+  if (host.includes("github.io")) {
+    return "https://iot-data-science-project-sxsx.vercel.app/api";
+  }
+  return "/api";
+}
+
+const API_ROOT = resolveApiRoot();
+
+function apiUrl(path) {
+  return `${API_ROOT}${path}`;
+}
+
+function showApiBanner() {
+  const banner = document.createElement("div");
+  banner.textContent = `API: ${API_ROOT}`;
+  banner.style.position = "fixed";
+  banner.style.bottom = "12px";
+  banner.style.right = "12px";
+  banner.style.zIndex = "9999";
+  banner.style.padding = "6px 10px";
+  banner.style.fontSize = "12px";
+  banner.style.borderRadius = "6px";
+  banner.style.background = "rgba(15, 15, 15, 0.8)";
+  banner.style.color = "#fff";
+  banner.style.fontFamily = "monospace";
+  banner.style.boxShadow = "0 4px 12px rgba(0,0,0,0.25)";
+  document.body.appendChild(banner);
+}
 
 const chat = document.getElementById("chat");
 const input = document.getElementById("msg");
@@ -45,31 +79,52 @@ function renderText(text) {
   return bolded.replace(/\*\*/g, "");
 }
 
+const SESSION_KEY = "session_id";
+
 function getSessionId() {
-  return localStorage.getItem("session_id") || "";
+  return localStorage.getItem(SESSION_KEY) || "";
 }
 
 function setSessionId(id) {
-  if (id) localStorage.setItem("session_id", id);
+  if (id) localStorage.setItem(SESSION_KEY, id);
+}
+
+function sessionHeaders() {
+  const sessionId = getSessionId();
+  return sessionId ? { "X-Session-Id": sessionId } : {};
+}
+
+function withSession(url) {
+  const sessionId = getSessionId();
+  if (!sessionId) return url;
+  const u = new URL(url, window.location.origin);
+  u.searchParams.set("session_id", sessionId);
+  return u.toString();
+}
+
+async function fetchJson(url, options = {}) {
+  const res = await fetch(url, options);
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error("API Error:", res.status, errorText);
+    throw new Error(`API returned ${res.status}: ${errorText}`);
+  }
+  return res.json();
 }
 
 async function sendToBot(message) {
-  const res = await fetch(API_URL, {
+  const sessionId = getSessionId();
+  const payload = { message };
+  if (sessionId) payload.session_id = sessionId;
+
+  const data = await fetchJson(apiUrl("/chat"), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "X-Session-Id": getSessionId()
+      ...sessionHeaders()
     },
-    body: JSON.stringify({ message, session_id: getSessionId() })
+    body: JSON.stringify(payload)
   });
-  
-  if (!res.ok) {
-    const errorText = await res.text();
-    console.error('API Error:', res.status, errorText);
-    throw new Error(`API returned ${res.status}: ${errorText}`);
-  }
-  
-  const data = await res.json();
   if (data.session_id) setSessionId(data.session_id);
   return data.reply || "(no reply)";
 }
@@ -80,8 +135,9 @@ async function fetchBookings() {
     bookingList.innerHTML = "<div class=\"booking-meta\">No session yet.</div>";
     return;
   }
-  const res = await fetch(`${API_URL.replace("/chat", "")}/bookings?session_id=${encodeURIComponent(sessionId)}`);
-  const data = await res.json();
+  const data = await fetchJson(withSession(apiUrl("/bookings")), {
+    headers: { ...sessionHeaders() }
+  });
   renderBookings(data.bookings || []);
 }
 
@@ -93,7 +149,7 @@ function renderBookings(bookings) {
   bookingList.innerHTML = bookings.map((b) => {
     const title = b.booking_type || "unknown";
     const detailKeys = Object.keys(b.details || {});
-    const detailPreview = detailKeys.slice(0, 2).map((k) => `${k}: ${b.details[k]}`).join(" • ");
+    const detailPreview = detailKeys.slice(0, 2).map((k) => `${k}: ${b.details[k]}`).join(" | ");
     return `
       <div class="booking-card" data-open="${b.id}">
         <div class="booking-title">${escapeHtml(title)}</div>
@@ -125,8 +181,9 @@ bookingList.addEventListener("click", async (e) => {
 async function deleteBooking(id) {
   const sessionId = getSessionId();
   if (!sessionId) return;
-  await fetch(`${API_URL.replace("/chat", "")}/bookings/${id}?session_id=${encodeURIComponent(sessionId)}`, {
-    method: "DELETE"
+  await fetchJson(withSession(apiUrl(`/bookings/${id}`)), {
+    method: "DELETE",
+    headers: { ...sessionHeaders() }
   });
 }
 
@@ -137,8 +194,9 @@ async function openBooking(id) {
     modal.classList.remove("hidden");
     return;
   }
-  const res = await fetch(`${API_URL.replace("/chat", "")}/bookings/${id}?session_id=${encodeURIComponent(sessionId)}`);
-  const data = await res.json();
+  const data = await fetchJson(withSession(apiUrl(`/bookings/${id}`)), {
+    headers: { ...sessionHeaders() }
+  });
   if (!data.booking) {
     modalError.textContent = data.error || "Booking not found.";
     modal.classList.remove("hidden");
@@ -171,12 +229,11 @@ async function saveBooking() {
   if (contact) details.contact = contact;
 
   const payload = { details };
-  const res = await fetch(`${API_URL.replace("/chat", "")}/bookings/${activeBookingId}?session_id=${encodeURIComponent(sessionId)}`, {
+  const data = await fetchJson(withSession(apiUrl(`/bookings/${activeBookingId}`)), {
     method: "PATCH",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...sessionHeaders() },
     body: JSON.stringify(payload)
   });
-  const data = await res.json();
   if (!data.ok) {
     modalError.textContent = data.error || "Failed to update booking.";
     return;
@@ -188,8 +245,9 @@ async function saveBooking() {
 async function clearHistory() {
   const sessionId = getSessionId();
   if (!sessionId) return;
-  await fetch(`${API_URL.replace("/chat", "")}/history/clear?session_id=${encodeURIComponent(sessionId)}`, {
-    method: "POST"
+  await fetchJson(withSession(apiUrl("/history/clear")), {
+    method: "POST",
+    headers: { ...sessionHeaders() }
   });
   chat.innerHTML = "";
   addMsg("Bot", "Chat history cleared. Happy now?");
@@ -198,14 +256,15 @@ async function clearHistory() {
 async function fetchClinicInfo() {
   // Services are provided by the chat API, so this call is not needed
   /*
-  const res = await fetch(`${API_URL.replace("/chat", "")}/clinic/info`);
-  const data = await res.json();
+  const data = await fetchJson(apiUrl("/clinic/info"), {
+    headers: { ...sessionHeaders() }
+  });
   const clinic = data.clinic || {};
   const services = (clinic.services || []).map((s) => {
     const bits = [s.name];
     if (s.duration_minutes) bits.push(`${s.duration_minutes} min`);
     if (s.price_sgd != null) bits.push(`SGD ${s.price_sgd}`);
-    return bits.join(" • ");
+    return bits.join(" | ");
   });
   if (services.length) {
     addMsg("Bot", "Services available:\n- " + services.join("\n- "));
@@ -243,7 +302,9 @@ closeModalBtn.addEventListener("click", () => modal.classList.add("hidden"));
 saveBookingBtn.addEventListener("click", saveBooking);
 
 addMsg("Bot", "Hi, I'm BookBot. Here are the available services:");
+showApiBanner();
 fetchClinicInfo().catch(() => {
   addMsg("Bot", "I couldn't load the service list right now.");
 });
 fetchBookings();
+
