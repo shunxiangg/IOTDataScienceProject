@@ -4,6 +4,14 @@ Simple OpenAI chat demo with:
 - Local FastAPI backend + static frontend
 - AWS Lambda backend + S3-hosted frontend
 
+## Tech Stack
+- Frontend: HTML, CSS, JavaScript (static UI)
+- API (Vercel): Node.js serverless functions in /api
+- Backend (local): Python, FastAPI, Uvicorn
+- Serverless (AWS): Lambda + API Gateway
+- Hosting: Vercel, S3, GitHub Pages
+- Data: JSON files for sessions and clinic knowledge
+
 ## Prerequisites
 - Python 3.10+
 - An OpenAI API key
