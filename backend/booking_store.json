@@ -4,8 +4,8 @@
       "booking_type": "appointment",
       "details": {},
       "status": "draft",
-      "created_at": "2026-02-07T15:18:55.364174+00:00",
-      "updated_at": "2026-02-07T15:18:55.364176+00:00",
+      "created_at": "2026-02-10T08:02:22.494964+00:00",
+      "updated_at": "2026-02-10T08:02:22.494975+00:00",
       "missing_fields": [],
       "last_field": "",
       "pending_field": "",
@@ -13,23 +13,13 @@
       "awaiting_confirmation": false,
       "confirmation_summary": ""
     },
-    "bookings": [
+    "bookings": [],
+    "history": [
       {
-        "id": "74c8b831-1d22-434d-9059-4c0aea7d1e40",
-        "booking_type": "appointment",
-        "details": {
-          "service": "General Consultation",
-          "date": "23 nov",
-          "time": "11am",
-          "location": "Orchard",
-          "contact": "shunciang 9876337"
-        },
-        "status": "booked",
-        "created_at": "2026-02-07T15:18:55.364161+00:00",
-        "updated_at": "2026-02-07T15:19:22.651410+00:00",
-        "confirmation_summary": "**Booking type:** appointment\n**service:** General Consultation\n**date:** 23 dec\n**time:** 11am\n**location:** Orchard\n**contact:** shunciang 9876337\n**status:** draft"
+        "at": "2026-02-10T08:02:22.494990+00:00",
+        "user": "\\yes",
+        "assistant": "Successfully booked."
       }
-    ],
-    "history": []
+    ]
   }
 }
